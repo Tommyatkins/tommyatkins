@@ -19,6 +19,7 @@ public class ClientReaderThread extends ServerHandlerSetting implements Runnable
 	@Override
 	public void run() {
 		try {
+			
 			System.out.println("selectionKey.isReadable()");
 			SelectableChannel channel = this.selectionKey.channel();
 			ByteBuffer data = ByteBuffer.allocate(bufferSize);
@@ -31,6 +32,7 @@ public class ClientReaderThread extends ServerHandlerSetting implements Runnable
 				if (length > 0) {
 					System.out.println("server receive[" + length + "]: " + message);
 					this.selectionKey.attach(message);
+					selectionKey.interestOps(SelectionKey.OP_WRITE);
 				}
 			}
 

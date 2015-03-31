@@ -67,10 +67,8 @@ public class ServerChannel implements Runnable {
 							clientChannel.register(selector, SelectionKey.OP_READ);
 						} else if (selectionKey.isReadable()) {
 							threadPools.read(new ClientReaderThread(selectionKey));
-							selectionKey.interestOps(SelectionKey.OP_WRITE);
 						} else if (selectionKey.isWritable()) {
 							threadPools.write(new ClientWriterThread(selectionKey));
-							selectionKey.interestOps(SelectionKey.OP_READ);
 						} else {
 							// threadPools.distribute(new ClientDistributeThread(selectionKey));
 						}
