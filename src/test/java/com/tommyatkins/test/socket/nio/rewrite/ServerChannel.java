@@ -75,7 +75,6 @@ public class ServerChannel implements Runnable {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					//TODO
 				} finally {
 					selectedKeys.remove();
 				}
@@ -102,7 +101,7 @@ public class ServerChannel implements Runnable {
 			System.out.println("Nio ServerChannel Startup  ————————————————————");
 			this.selector = Selector.open();
 			this.keep_working = true;
-			threadPools = ThreadPoolCollection.threadPools(3, 5, 5);
+			threadPools = ThreadPoolCollection.threadPools(1, 1, 1);
 			startListener(registSelector(this.host, this.port, this.selector, threadPools));
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -11,11 +11,11 @@ public class ThreadPoolCollection {
 	private static ThreadPoolCollection threadPools;
 
 	public static ThreadPoolCollection threadPools() {
-		return threadPools(1, 1, 1);
+		return threadPools = threadPools(1, 1, 1);
 	}
 
 	public static ThreadPoolCollection threadPools(int distributePoolSize, int readPoolSize, int writePoolSize) {
-		return threadPools == null ? new ThreadPoolCollection(distributePoolSize, readPoolSize, writePoolSize) : threadPools;
+		return threadPools = threadPools == null ? new ThreadPoolCollection(distributePoolSize, readPoolSize, writePoolSize) : threadPools;
 	}
 
 	private ExecutorService clientDistributeThreadPool;
@@ -23,15 +23,15 @@ public class ThreadPoolCollection {
 	private ExecutorService clientWriterThreadPool;
 
 	public void distribute(Runnable runnable) {
-		doWork(threadPools().clientDistributeThreadPool, runnable);
+		doWork(threadPools.clientDistributeThreadPool, runnable);
 	}
 
 	public void read(Runnable runnable) {
-		doWork(threadPools().clientReaderThreadPool, runnable);
+		doWork(threadPools.clientReaderThreadPool, runnable);
 	}
 
 	public void write(Runnable runnable) {
-		doWork(threadPools().clientWriterThreadPool, runnable);
+		doWork(threadPools.clientWriterThreadPool, runnable);
 	}
 
 	private void doWork(ExecutorService executorService, Runnable runnable) {

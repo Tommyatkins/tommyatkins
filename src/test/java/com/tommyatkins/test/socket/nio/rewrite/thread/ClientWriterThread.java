@@ -18,16 +18,19 @@ public class ClientWriterThread extends ServerHandlerSetting implements Runnable
 	@Override
 	public void run() {
 		try {
-			System.out.println("selectionKey.isWritable()");
-			SelectableChannel channel = this.selectionKey.channel();
-			Object messageAtta = this.selectionKey.attachment();
-			String message = messageAtta == null ? "" : messageAtta.toString();
-			SocketChannel socketChannel = (SocketChannel) channel;
-			socketChannel.write(encode(message + "[TOMMYATKINS_孔梓茏]\r\n"));
+			synchronized (selectionKey) {
+				System.out.println("selectionKey.isWritable()");
+				SelectableChannel channel = this.selectionKey.channel();
+				Object messageAtta = this.selectionKey.attachment();
+				String message = messageAtta == null ? "" : messageAtta.toString();
+				SocketChannel socketChannel = (SocketChannel) channel;
+				socketChannel.write(encode(message + " [TOMMYATKINS_孔梓茏]\r\n"));
+				this.selectionKey.interestOps(SelectionKey.OP_READ);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			this.selectionKey.cancel();
-		} 
+		}
 
 	}
 }

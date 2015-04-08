@@ -9,22 +9,27 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Client extends Thread {
 	private Charset charset = Charset.forName("GBK");
-	private Scanner clientWrite = new Scanner(System.in);
+	private ConcurrentLinkedQueue<String> messageQueue;
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		new Client("127.0.0.1", 9999).start();
+		ConcurrentLinkedQueue<String> messageQueue = new ConcurrentLinkedQueue<String>();
+		Client client = new Client("127.0.0.1", 9999, messageQueue);
+		client.new MessageWriter(messageQueue).start();
+		client.start();
 	}
 
 	private Selector selector;
 
-	public Client(String host, int port) throws IOException, InterruptedException {
+	public Client(String host, int port, ConcurrentLinkedQueue<String> messageQueue) throws IOException, InterruptedException {
 		selector = Selector.open();
 		SocketChannel sc = SocketChannel.open(new InetSocketAddress(host, port));
 		sc.configureBlocking(false);
 		sc.register(selector, SelectionKey.OP_WRITE);
+		this.messageQueue = messageQueue;
 	}
 
 	/* 编码过程 */
@@ -57,7 +62,6 @@ public class Client extends Thread {
 							System.out.println("server had disconnect the request and we shall canele it :" + sc.getLocalAddress());
 							// key.cancel();
 							sc.close();
-							clientWrite.close();
 							keep = false;
 						} else {
 							b.flip();
@@ -69,21 +73,19 @@ public class Client extends Thread {
 								keep = false;
 							} else {
 								System.out.println("return:" + retMessage);
-								key.interestOps(SelectionKey.OP_WRITE);
+								key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
 							}
 						}
 					} else if (key.isWritable()) {
-						System.out.println("client.isWritable");
-						System.out.print("请输入你要发送的内容：");
-						String message = clientWrite.nextLine();
-						SocketChannel sc = (SocketChannel) key.channel();
-						ByteBuffer b = encode(message);
-						sc.write(b);
-						if (message == null || message.isEmpty()) {
-							
-						} else {
-							key.interestOps(SelectionKey.OP_READ);
+						while (!messageQueue.isEmpty()) {
+							String message = messageQueue.poll();
+							SocketChannel sc = (SocketChannel) key.channel();
+							ByteBuffer b = encode(message);
+							sc.write(b);
+							System.out.println("Send message: " + message);
 						}
+						key.interestOps(key.interestOps() | SelectionKey.OP_READ);
+
 					} else {
 						System.out.println("Connectable:" + key.isConnectable());
 						System.out.println("Valid:" + key.isValid());
@@ -100,6 +102,26 @@ public class Client extends Thread {
 				e.printStackTrace();
 			}
 
+		}
+	}
+
+	private class MessageWriter extends Thread {
+
+		private ConcurrentLinkedQueue<String> messageQueue;
+		private Scanner clientWrite = new Scanner(System.in);
+
+		public MessageWriter(ConcurrentLinkedQueue<String> messageQueue) {
+			this.messageQueue = messageQueue;
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				System.out.println("Please input your message !");
+				String message = clientWrite.nextLine();
+				this.messageQueue.offer(message);
+				System.out.println("Add message to queue: " + message);
+			}
 		}
 	}
 }

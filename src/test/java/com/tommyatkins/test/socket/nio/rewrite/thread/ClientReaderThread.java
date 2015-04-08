@@ -19,28 +19,26 @@ public class ClientReaderThread extends ServerHandlerSetting implements Runnable
 	@Override
 	public void run() {
 		try {
-			
-			System.out.println("selectionKey.isReadable()");
-			SelectableChannel channel = this.selectionKey.channel();
-			ByteBuffer data = ByteBuffer.allocate(bufferSize);
-			SocketChannel socketChannel = (SocketChannel) channel;
-			int length = 0;
-			if ((length = socketChannel.read(data)) == -1) {
-				//this.selectionKey.cancel();
-			} else {
-				String message = decode(data);
-				if (length > 0) {
-					System.out.println("server receive[" + length + "]: " + message);
-					this.selectionKey.attach(message);
-					selectionKey.interestOps(SelectionKey.OP_WRITE);
+			synchronized (selectionKey) {
+				System.out.println("selectionKey.isReadable()");
+				SelectableChannel channel = this.selectionKey.channel();
+				ByteBuffer data = ByteBuffer.allocate(bufferSize);
+				SocketChannel socketChannel = (SocketChannel) channel;
+				int length = 0;
+				if ((length = socketChannel.read(data)) == -1) {
+					// this.selectionKey.cancel();
+				} else {
+					String message = decode(data);
+					if (length > 0) {
+						System.out.println("server receive[" + length + "]: " + message);
+						this.selectionKey.attach(message);
+						this.selectionKey.interestOps(SelectionKey.OP_WRITE);
+					}
 				}
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 			this.selectionKey.cancel();
-		} finally {
-			// this.selectionKey.cancel();
 		}
 	}
 }
