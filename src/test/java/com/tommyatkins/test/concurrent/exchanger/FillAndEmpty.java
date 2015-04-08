@@ -6,6 +6,7 @@ public class FillAndEmpty {
 
 	public static void main(String[] args) {
 		new FillAndEmpty().start();
+		// TEST
 	}
 
 	Exchanger<DataBuffer> exchanger = new Exchanger<DataBuffer>();
