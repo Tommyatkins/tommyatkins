@@ -138,6 +138,25 @@
 			<artifactId>fastdfs</artifactId>
 			<version>1.24</version>
 		</dependency> 
+		
+		<!-- ActiveMQ ( JMS ) -->
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-jms_1.1_spec</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.qpid</groupId>
+			<artifactId>qpid-amqp-1-0-client-jms</artifactId>
+			<version>0.30</version>
+		</dependency>
+		
+		<!-- redis jedis -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.4.2</version>
+		</dependency>
 
 	</dependencies>
 
