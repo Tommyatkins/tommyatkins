@@ -24,14 +24,14 @@ public class MyObjectPool extends GenericObjectPool<MyObject> {
 	@Override
 	public MyObject borrowObject() throws Exception {
 		MyObject obj = super.borrowObject();
-		System.out.println(String.format("Prepare to borrow out %s", obj.toString()));
+		//System.out.println(String.format("Prepare to borrow out %s", obj.toString()));
 		obj.raiseBorrowCount();
 		return obj;
 	}
 
 	@Override
 	public void returnObject(MyObject obj) {
-		System.out.println(String.format("Prepare to put back %s", obj.toString()));
+		//System.out.println(String.format("Prepare to put back %s", obj.toString()));
 		obj.raiseReturnCount();
 		super.returnObject(obj);
 	}
