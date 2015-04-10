@@ -14,7 +14,7 @@ public class JedisClientTest {
 		config.setMaxIdle(10);
 		config.setMaxWaitMillis(10000);
 		config.setTestOnBorrow(true);
-		jedisPool = new JedisPool(config, "127.0.0.1", 6379);
+		jedisPool = new JedisPool(config, "127.0.0.1", 6379,10000,"rimi");
 	}
 	
 	public JedisPool getJedisPool() {
@@ -26,7 +26,7 @@ public class JedisClientTest {
 		JedisPool pool = test.getJedisPool();
 		
 		Jedis conn = pool.getResource();
-		
+		conn.shutdown();
 		pool.returnResource(conn);
 	}
 	
