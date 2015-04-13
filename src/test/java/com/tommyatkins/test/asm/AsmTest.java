@@ -11,13 +11,15 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 import com.tommyatkins.test.asm.output.Result;
 
 public class AsmTest {
 	public static void main(String[] args) throws Exception {
-		addMethod();
+//		addMethod();
 		// new Result().test();
+		System.out.println(Type.getType(String.class));;
 	}
 
 	public static void addMethod() throws Exception {
