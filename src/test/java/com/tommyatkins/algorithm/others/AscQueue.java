@@ -75,9 +75,8 @@ public class AscQueue<E extends Comparable<E>> {
 				notEmpty.await();
 
 			entity = dequeue();
-
 			c = count.getAndDecrement();
-			if (c > 1) {
+			if (c - 1 > 0) {
 				notEmpty.signal();
 			}
 
@@ -88,7 +87,6 @@ public class AscQueue<E extends Comparable<E>> {
 			// 通知可以put
 			this.signalNotFull();
 		}
-
 		return entity;
 	}
 
