@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 public class QueueTest {
 
 	public static void main(String[] args) throws InterruptedException {
-		normal();
+		 normal();
 		// advance();
 		// advanceDefault();
 		// logicConfirm();
