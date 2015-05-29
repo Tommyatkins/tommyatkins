@@ -29,7 +29,7 @@ public class 時間よとまれ extends Song {
 		System.out.println("足（た）りない　あと百（ひゃく）時間");
 		System.out.println();
 		System.out.println("それだけあれば　もっともっと");
-		System.out.println("みつけるよ　君のいいこと");
+		System.out.println("みつけるよ　君のいいとこ");
 
 	}
 
