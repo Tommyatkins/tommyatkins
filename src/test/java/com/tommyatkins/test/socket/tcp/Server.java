@@ -16,7 +16,7 @@ public class Server extends Thread {
 	private Charset charset = Charset.forName("GBK");
 
 	public static void main(String[] args) throws IOException {
-		new Server(9999).start();
+		new Server(8080).start();
 	}
 
 	public Server(int port) throws IOException {
