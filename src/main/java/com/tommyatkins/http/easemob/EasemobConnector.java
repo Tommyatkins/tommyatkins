@@ -31,14 +31,8 @@ public class EasemobConnector {
 	private static String Bearer;
 
 	public static void main(String[] args) throws IOException {
-		String sql = "select * ";
-		String cursor = null;
-		//1419312461629
-		String s = getChatMessages(1000, sql , cursor);
-		File f = new File("out.txt");
-		FileOutputStream fos = new FileOutputStream(f);
-		fos.write(s.getBytes());
-		fos.close();
+
+		System.out.println(getUser("18628157290"));;
 	}
 
 	static {
