@@ -26,6 +26,10 @@ import javax.net.ssl.TrustManager;
 public class HttpConnection {
 
 	public static void main(String[] args) throws IOException {
+		//	serialToUDID  CBF5CE79-49FF-45CC-BEA4-F0D112C2FB27
+		//	isActive b448dd838e14990cbfd25ef43ee8b4fd6bc64cad
+		InputStream is = new ByteArrayInputStream("b448dd838e14990cbfd25ef43ee8b4fd6bc64cad".getBytes("utf-8"));
+		System.out.println(byteToString(put("https://192.168.0.106/mdm/terminal/terminal!isActive.action?", is)));
 	}
 
 	public enum RequestMethod {

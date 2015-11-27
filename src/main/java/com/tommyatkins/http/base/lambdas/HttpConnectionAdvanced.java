@@ -23,8 +23,8 @@ import com.tommyatkins.http.base.lambdas.process.functional.HttpConnectionProces
 public class HttpConnectionAdvanced {
 
 	public static void main(String[] args) throws IOException {
-		//&to=b60ae64ea919c9b9b7a5637de0c4f7b3
-		//String params = "from=8f20678b5396a977408d7f2e6d45d5d0&msg=Hello";
+		// &to=b60ae64ea919c9b9b7a5637de0c4f7b3
+		// String params = "from=8f20678b5396a977408d7f2e6d45d5d0&msg=Hello";
 		String params = "id=448159d8-375a-4e05-b660-decdfa288004";
 		ByteArrayInputStream is = new ByteArrayInputStream(params.getBytes("UTF-8"));
 		byte[] data = request(RequestMethod.POST, "https://192.168.0.106/op/patient/information", DefaultProcess.write(is, 1024));
@@ -33,7 +33,11 @@ public class HttpConnectionAdvanced {
 	}
 
 	public static byte[] request(final RequestMethod method, final String url, HttpConnectionProcess<?>... processes) throws IOException {
-		final Map<ProcessPoint, List<HttpConnectionProcess<?>>> processesMap = sortProcesses(processes);
+		return request(method, url, sortProcesses(processes));
+	}
+
+	public static byte[] request(final RequestMethod method, final String url, final Map<ProcessPoint, List<HttpConnectionProcess<?>>> processesMap)
+			throws IOException {
 		final HttpURLConnection connection = HttpConnection.getDefaultConnector(url, method);
 		unCareReturnTypeProcess(processesMap, ProcessPoint.beforeConnect, connection);
 		connection.connect();

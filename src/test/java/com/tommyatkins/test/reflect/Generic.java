@@ -18,6 +18,9 @@ public class Generic extends Base<String> {
 }
 
 class Base<T> {
+	
+	//ParameterizedType.getActualTypeArguments();
+	
 	public Class<?> getGenericType(int index) {
 		Type genType = getClass().getGenericSuperclass();
 		if (!(genType instanceof ParameterizedType)) {

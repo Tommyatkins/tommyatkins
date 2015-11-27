@@ -48,14 +48,18 @@ public class DefaultProcess {
 			return connection;
 		};
 
-		return process.point(ProcessPoint.beforeConnect);
+		return process.point(ProcessPoint.write);
 	}
 
 	public static HttpConnectionProcess<byte[]> read() {
+		return read(200);
+	}
+
+	public static HttpConnectionProcess<byte[]> read(final int successCode) {
 		HttpConnectionProcess<byte[]> process = (connection) -> {
 			byte[] data = null;
 			int code = connection.getResponseCode();
-			if (code == 200) {
+			if (code == successCode) {
 				try (InputStream in = connection.getInputStream();) {
 					data = HttpConnection.readBytesFromInputStream(in);
 					in.close();

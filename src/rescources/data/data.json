@@ -1,0 +1,22 @@
+{
+    "HostConfig": {
+        "RestartPolicy": {
+            "Name": "no"
+        },
+        "Links": [],
+        "Binds": [],
+        "Privileged": false,
+        "PublishAllPorts": false,
+        "PortBindings": {}
+    },
+    "Links": [],
+    "ExposedPorts": {},
+    "Volumes": {},
+    "Env": [],
+    "AttachStdin": false,
+    "Tty": true,
+    "Image": "ubuntu:latest",
+    "Hostname": "MyHostName",
+    "CpuShares": null,
+    "Memory": null
+}
