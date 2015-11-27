@@ -136,9 +136,9 @@ public class ShipyardRemoteApi {
 		return get(200, subURL(String.format("/api/nodes/%s", name)));
 	}
 
-	public String createContainer(String name) throws IOException {
-		String data = readJSONData();
-		return post(201, subURL(String.format("/containers/create?name=%s", name == null ? "" : name)), data, 360);
+	public String createContainer(String name, String config) throws IOException {
+
+		return post(201, subURL(String.format("/containers/create?name=%s", name == null ? "" : name)), config, 360);
 	}
 
 	public String startContainer(String id) throws IOException {
@@ -157,20 +157,24 @@ public class ShipyardRemoteApi {
 
 		ShipyardRemoteApi api = new ShipyardRemoteApi();
 
+		//token
 		System.out.println(api.accessToken(api.username, api.password));
 
-		String createdData = api.createContainer("TOMMYATKINS");
+		//create
+		String config = api.readJSONData();
+
+		String createdData = api.createContainer("TOMMYATKINS", config);
 
 		System.out.println(createdData);
 
 		JSONObject createdJSON = JSONObject.parseObject(createdData);
-
+		//container id
 		String createdId = createdJSON.getString("Id");
 
 		System.out.println(createdId);
-
+		//start
 		api.startContainer(createdId);
-
+		//container information
 		String containerData = api.getContainer(createdId);
 
 		System.out.println(containerData);
@@ -180,9 +184,11 @@ public class ShipyardRemoteApi {
 		int containerSize = containerArray.size();
 
 		if (containerSize == 1) {
+			
 			JSONObject container = containerArray.getJSONObject(0);
 			JSONArray names = container.getJSONArray("Names");
 			if (names.size() > 0) {
+				//container full name
 				String fullName = names.getString(0);
 				System.out.println(fullName);
 				Pattern pattern = Pattern.compile("^/[\\D\\d]*/");
@@ -190,7 +196,7 @@ public class ShipyardRemoteApi {
 				Matcher matcher = pattern.matcher(fullName);
 
 				String nodeName = null;
-
+				// matche node name
 				if (matcher.find()) {
 					nodeName = fullName.substring(matcher.start() + 1, matcher.end() - 1);
 				}
@@ -200,13 +206,16 @@ public class ShipyardRemoteApi {
 				} else {
 					System.out.println(nodeName);
 
+					//node information
 					String nodeData = api.getNode(nodeName);
 
 					JSONObject node = JSONObject.parseObject(nodeData);
+					//node address
 					String nodeAddr = node.getString("addr");
 					int splitIndex = nodeAddr.indexOf(":");
 					String host = null, port = null;
 					if (splitIndex > -1) {
+						//host and port
 						host = nodeAddr.substring(0, splitIndex);
 						port = nodeAddr.substring(splitIndex + 1);
 					}

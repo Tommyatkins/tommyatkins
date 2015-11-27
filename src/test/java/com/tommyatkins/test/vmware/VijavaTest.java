@@ -138,7 +138,7 @@ public class VijavaTest {
 		// String templatename = "win7-ganjing-muban";
 		String virtualmachinename = "E-Learning-7-10";
 		String datastorename = "VM-kaifabu_Server";
-		String poolname = "E-Learning";
+		String poolname = "E-Learning-ubuntu";
 		String folderName = "E-Learning_VMs";
 
 		Folder rootFolder = instance.getRootFolder();
