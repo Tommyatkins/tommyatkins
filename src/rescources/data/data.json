@@ -6,17 +6,28 @@
         "Links": [],
         "Binds": [],
         "Privileged": false,
-        "PublishAllPorts": false,
-        "PortBindings": {}
+        "PublishAllPorts": true,
+        "PortBindings": {
+            "5900/tcp": [
+                {
+                    "HostPort": ""
+                }
+            ]
+        }
     },
     "Links": [],
-    "ExposedPorts": {},
+    "ExposedPorts": {
+        "5900/tcp": {}
+    },
     "Volumes": {},
     "Env": [],
     "AttachStdin": false,
     "Tty": true,
-    "Image": "ubuntu:latest",
-    "Hostname": "MyHostName",
+    "Hostname": "",
+    "Image": "192.168.7.180:5000/yangli/ubuntu-xfce-vnc:1.3",
+    "Domainname": "",
     "CpuShares": null,
     "Memory": null
 }
+
+

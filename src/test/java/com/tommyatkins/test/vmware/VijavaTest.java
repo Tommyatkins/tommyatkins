@@ -5,24 +5,17 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.vmware.vim25.CustomizationAdapterMapping;
 import com.vmware.vim25.CustomizationFixedIp;
 import com.vmware.vim25.CustomizationFixedName;
 import com.vmware.vim25.CustomizationGlobalIPSettings;
-import com.vmware.vim25.CustomizationGuiUnattended;
 import com.vmware.vim25.CustomizationIPSettings;
-import com.vmware.vim25.CustomizationIdentification;
 import com.vmware.vim25.CustomizationLinuxOptions;
 import com.vmware.vim25.CustomizationLinuxPrep;
-import com.vmware.vim25.CustomizationName;
 import com.vmware.vim25.CustomizationSpec;
 import com.vmware.vim25.CustomizationSpecInfo;
 import com.vmware.vim25.CustomizationSpecItem;
-import com.vmware.vim25.CustomizationUserData;
-import com.vmware.vim25.CustomizationVirtualMachineName;
-import com.vmware.vim25.ManagedEntityStatus;
 import com.vmware.vim25.VirtualDevice;
 import com.vmware.vim25.VirtualDeviceConfigSpec;
 import com.vmware.vim25.VirtualDeviceConfigSpecFileOperation;
@@ -49,14 +42,16 @@ public class VijavaTest {
 	public static void main(String[] args) throws Exception {
 		// "vm-926292c1-a228-46ed-a181-722f987b74e4" 7.8
 		String host = "192.168.6.30";
-//		String host = "192.168.7.2";
+		// String host = "192.168.7.2";
 		URL url = new URL("https", host, "/sdk");
 		ServiceInstance instance = new ServiceInstance(url, "administrator", "Rimi123456", true);
-//		ServiceInstance instance = new ServiceInstance(url, "root", "rimitest67510", true);
+		// ServiceInstance instance = new ServiceInstance(url, "root", "rimitest67510", true);
 		// test(instance);
-		createMin(instance);
+		VirtualMachine vm = createMin(instance);
 		// CustomizationSpec elearningCustomizations = getCustomizationSpec(instance, "E-LearningCustomizations");
-
+		Thread.sleep(20000);
+		vm.rebootGuest();
+		instance.getServerConnection().logout();
 	}
 
 	public static void test(ServiceInstance instance) throws Exception {
@@ -132,10 +127,11 @@ public class VijavaTest {
 		return spec;
 	}
 
-	public static void createMin(ServiceInstance instance) throws Exception {
+	public static VirtualMachine createMin(ServiceInstance instance) throws Exception {
 
 		String templatename = "E-Learning-ubuntu-14.04.1-Template";
-		// String templatename = "win7-ganjing-muban";
+		// String templatename = "E-Learning-ubuntu-14.04.1-Template";
+		// String templatename = "2NetWork";
 		String virtualmachinename = "E-Learning-7-10";
 		String datastorename = "VM-kaifabu_Server";
 		String poolname = "E-Learning-ubuntu";
@@ -187,6 +183,10 @@ public class VijavaTest {
 		} else {
 			System.out.println("模板生成虚拟机失败，请查询Vcenter 上相关日志信息");
 		}
+
+		VirtualMachine vm = (VirtualMachine) inventoryNavigator.searchManagedEntity("VirtualMachine", virtualmachinename);
+
+		return vm;
 	}
 
 	// 查询用户已经创建的自定义规范

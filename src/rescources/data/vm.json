@@ -1,0 +1,185 @@
+{
+    "Id": "4e0d5cd57f90930f192b52fb2a74063006ab32b5278d404155c56ee93a6fde02",
+    "Created": "2015-12-11T02:52:36.384295411Z",
+    "Path": "./startup.sh",
+    "Args": [],
+    "State": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 2222,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2015-12-11T02:52:37.710408045Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+    },
+    "Image": "fc633f6b495da548f657b07b446eb8e85ae4111238cb967b20371d63b1edfdda",
+    "ResolvConfPath": "/mnt/sda1/var/lib/docker/containers/4e0d5cd57f90930f192b52fb2a74063006ab32b5278d404155c56ee93a6fde02/resolv.conf",
+    "HostnamePath": "/mnt/sda1/var/lib/docker/containers/4e0d5cd57f90930f192b52fb2a74063006ab32b5278d404155c56ee93a6fde02/hostname",
+    "HostsPath": "/mnt/sda1/var/lib/docker/containers/4e0d5cd57f90930f192b52fb2a74063006ab32b5278d404155c56ee93a6fde02/hosts",
+    "LogPath": "/mnt/sda1/var/lib/docker/containers/4e0d5cd57f90930f192b52fb2a74063006ab32b5278d404155c56ee93a6fde02/4e0d5cd57f90930f192b52fb2a74063006ab32b5278d404155c56ee93a6fde02-json.log",
+    "Node": {
+        "ID": "CFK3:SW6W:P7EX:FQIS:NAFG:L6CH:FLTH:V3ZQ:B24S:RDSD:ZDI7:5PMU",
+        "IP": "192.168.0.80",
+        "Addr": "192.168.0.80:2376",
+        "Name": "swarm-master",
+        "Cpus": 2,
+        "Memory": 2099810304,
+        "Labels": {
+            "executiondriver": "native-0.2",
+            "kernelversion": "4.1.13-boot2docker",
+            "operatingsystem": "Boot2Docker 1.9.1 (TCL 6.4.1); master : cef800b - Fri Nov 20 19:33:59 UTC 2015",
+            "provider": "vmwarevsphere",
+            "storagedriver": "aufs"
+        }
+    },
+    "Name": "/TOMMYATKINS",
+    "RestartCount": 0,
+    "Driver": "aufs",
+    "ExecDriver": "native-0.2",
+    "MountLabel": "",
+    "ProcessLabel": "",
+    "AppArmorProfile": "",
+    "ExecIDs": null,
+    "HostConfig": {
+        "Binds": [],
+        "ContainerIDFile": "",
+        "LxcConf": null,
+        "Memory": 0,
+        "MemoryReservation": 0,
+        "MemorySwap": 0,
+        "KernelMemory": 0,
+        "CpuShares": 0,
+        "CpuPeriod": 0,
+        "CpusetCpus": "",
+        "CpusetMems": "",
+        "CpuQuota": 0,
+        "BlkioWeight": 0,
+        "OomKillDisable": false,
+        "MemorySwappiness": 0,
+        "Privileged": false,
+        "PortBindings": {
+            "5900/tcp": [
+                {
+                    "HostIp": "",
+                    "HostPort": ""
+                }
+            ]
+        },
+        "Links": null,
+        "PublishAllPorts": true,
+        "Dns": null,
+        "DnsOptions": null,
+        "DnsSearch": null,
+        "ExtraHosts": null,
+        "VolumesFrom": null,
+        "Devices": null,
+        "NetworkMode": "default",
+        "IpcMode": "",
+        "PidMode": "",
+        "UTSMode": "",
+        "CapAdd": null,
+        "CapDrop": null,
+        "GroupAdd": null,
+        "RestartPolicy": {
+            "Name": "no",
+            "MaximumRetryCount": 0
+        },
+        "SecurityOpt": null,
+        "ReadonlyRootfs": false,
+        "Ulimits": null,
+        "LogConfig": {
+            "Type": "json-file",
+            "Config": {}
+        },
+        "CgroupParent": "",
+        "ConsoleSize": [
+            0,
+            0
+        ],
+        "VolumeDriver": ""
+    },
+    "GraphDriver": {
+        "Name": "aufs",
+        "Data": null
+    },
+    "Mounts": [],
+    "Config": {
+        "Hostname": "4e0d5cd57f90",
+        "Domainname": "",
+        "User": "",
+        "AttachStdin": false,
+        "AttachStdout": false,
+        "AttachStderr": false,
+        "ExposedPorts": {
+            "22/tcp": {},
+            "5900/tcp": {}
+        },
+        "Tty": true,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Env": [
+            "HOME=/root",
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "DEBIAN_FRONTEND=noninteractive"
+        ],
+        "Cmd": null,
+        "Image": "192.168.7.180:5000/yangli/ubuntu-xfce-vnc:1.3",
+        "Volumes": null,
+        "WorkingDir": "/root",
+        "Entrypoint": [
+            "./startup.sh"
+        ],
+        "OnBuild": null,
+        "Labels": {
+            "com.docker.swarm.id": "cdbdc6bdcf0fe62ff35cf6590a054111cc87f808637d59e9c3fa35a42793c0db"
+        }
+    },
+    "NetworkSettings": {
+        "Bridge": "",
+        "SandboxID": "d3dd05c6f72c2a8bff5ee23f5b68177cd975624e2cdf3b74238780581df04cd1",
+        "HairpinMode": false,
+        "LinkLocalIPv6Address": "",
+        "LinkLocalIPv6PrefixLen": 0,
+        "Ports": {
+            "22/tcp": [
+                {
+                    "HostIp": "192.168.0.80",
+                    "HostPort": "32771"
+                }
+            ],
+            "5900/tcp": [
+                {
+                    "HostIp": "192.168.0.80",
+                    "HostPort": "32770"
+                }
+            ]
+        },
+        "SandboxKey": "/var/run/docker/netns/d3dd05c6f72c",
+        "SecondaryIPAddresses": null,
+        "SecondaryIPv6Addresses": null,
+        "EndpointID": "481d497ec34ab21e5610e9c0d818c5d608cce58d7b718f99e17c29549f87a3cc",
+        "Gateway": "172.17.0.1",
+        "GlobalIPv6Address": "",
+        "GlobalIPv6PrefixLen": 0,
+        "IPAddress": "172.17.0.4",
+        "IPPrefixLen": 16,
+        "IPv6Gateway": "",
+        "MacAddress": "02:42:ac:11:00:04",
+        "Networks": {
+            "bridge": {
+                "EndpointID": "481d497ec34ab21e5610e9c0d818c5d608cce58d7b718f99e17c29549f87a3cc",
+                "Gateway": "172.17.0.1",
+                "IPAddress": "172.17.0.4",
+                "IPPrefixLen": 16,
+                "IPv6Gateway": "",
+                "GlobalIPv6Address": "",
+                "GlobalIPv6PrefixLen": 0,
+                "MacAddress": "02:42:ac:11:00:04"
+            }
+        }
+    }
+}

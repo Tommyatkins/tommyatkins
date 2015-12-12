@@ -25,8 +25,8 @@ import com.tommyatkins.http.base.lambdas.process.functional.HttpConnectionProces
 
 public class ShipyardRemoteApi {
 
-	private String username = "admin";
-	private String password = "shipyard";
+	private String username = "kongzl";
+	private String password = "123456";
 
 	private String token = "username:*************************************";
 
@@ -98,6 +98,11 @@ public class ShipyardRemoteApi {
 		return HttpConnection.byteToString(data);
 	}
 
+	private String delete(int successCode, String url) throws IOException {
+		byte[] data = request(RequestMethod.DELETE, successCode, url, authHeader(token), null);
+		return HttpConnection.byteToString(data);
+	}
+
 	public String subURL(String url) {
 		return String.format("%s%s", serverURL, url);
 	}
@@ -145,6 +150,14 @@ public class ShipyardRemoteApi {
 		return post(204, subURL(String.format("/containers/%s/start", id)), null);
 	}
 
+	public String killContainer(String id) throws IOException {
+		return post(204, subURL(String.format("/containers/%s/kill", id)), null);
+	}
+
+	public String removeContainer(String id) throws IOException {
+		return delete(204, subURL(String.format("/containers/%s", id)));
+	}
+
 	private String readJSONData() throws IOException {
 		InputStream fis = this.getClass().getResource("/data/data.json").openStream();
 		byte[] tmp = new byte[fis.available()];
@@ -157,10 +170,10 @@ public class ShipyardRemoteApi {
 
 		ShipyardRemoteApi api = new ShipyardRemoteApi();
 
-		//token
+		// token
 		System.out.println(api.accessToken(api.username, api.password));
 
-		//create
+		// create
 		String config = api.readJSONData();
 
 		String createdData = api.createContainer("TOMMYATKINS", config);
@@ -168,13 +181,13 @@ public class ShipyardRemoteApi {
 		System.out.println(createdData);
 
 		JSONObject createdJSON = JSONObject.parseObject(createdData);
-		//container id
+		// container id
 		String createdId = createdJSON.getString("Id");
 
 		System.out.println(createdId);
-		//start
+		// start
 		api.startContainer(createdId);
-		//container information
+		// container information
 		String containerData = api.getContainer(createdId);
 
 		System.out.println(containerData);
@@ -184,11 +197,11 @@ public class ShipyardRemoteApi {
 		int containerSize = containerArray.size();
 
 		if (containerSize == 1) {
-			
+
 			JSONObject container = containerArray.getJSONObject(0);
 			JSONArray names = container.getJSONArray("Names");
 			if (names.size() > 0) {
-				//container full name
+				// container full name
 				String fullName = names.getString(0);
 				System.out.println(fullName);
 				Pattern pattern = Pattern.compile("^/[\\D\\d]*/");
@@ -206,16 +219,16 @@ public class ShipyardRemoteApi {
 				} else {
 					System.out.println(nodeName);
 
-					//node information
+					// node information
 					String nodeData = api.getNode(nodeName);
 
 					JSONObject node = JSONObject.parseObject(nodeData);
-					//node address
+					// node address
 					String nodeAddr = node.getString("addr");
 					int splitIndex = nodeAddr.indexOf(":");
 					String host = null, port = null;
 					if (splitIndex > -1) {
-						//host and port
+						// host and port
 						host = nodeAddr.substring(0, splitIndex);
 						port = nodeAddr.substring(splitIndex + 1);
 					}
@@ -227,6 +240,9 @@ public class ShipyardRemoteApi {
 		} else {
 			System.out.printf("error size %d \r\n", containerSize);
 		}
+
+		api.killContainer(createdId);
+		api.removeContainer(createdId);
 	}
 
 }
