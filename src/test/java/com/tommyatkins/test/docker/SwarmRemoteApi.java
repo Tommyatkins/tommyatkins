@@ -40,7 +40,8 @@ public class SwarmRemoteApi {
 	private String username = "kongzl";
 	private String password = "123456";
 
-	private String serverURL = "https://192.168.0.80:3376";
+	// private String serverURL = "https://192.168.0.80:3376";
+	private String serverURL = "https://192.168.0.234:3376";
 
 	private KeyManager[] km;
 
@@ -48,7 +49,7 @@ public class SwarmRemoteApi {
 		try {
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			KeyStore ks = KeyStore.getInstance("PKCS12");
-			ks.load(this.getClass().getResource("/cert/client.p12").openStream(), "123456".toCharArray());
+			ks.load(this.getClass().getResource("/cert/docker.client.develop.p12").openStream(), "123456".toCharArray());
 			kmf.init(ks, "123456".toCharArray());
 			this.km = kmf.getKeyManagers();
 		} catch (Exception e) {
@@ -59,6 +60,7 @@ public class SwarmRemoteApi {
 	private byte[] request(RequestMethod method, int successCode, String url, Function<HttpURLConnection, HttpURLConnection> headerFunction,
 			final InputStream is) throws IOException {
 		byte[] data = null;
+		System.out.println(url);
 		URL requestURL = new URL(url);
 		HttpURLConnection connection = (HttpURLConnection) requestURL.openConnection();
 		if (requestURL.getProtocol().equals(HTTPS)) {
@@ -216,12 +218,12 @@ public class SwarmRemoteApi {
 
 	public static void main(String[] args) throws IOException {
 		SwarmRemoteApi api = new SwarmRemoteApi();
-		String id = "67fe68ccf155212481de82ac4d56524a6450b17e5b103e53ec646c4df031ff43";
-
-		String createConfig = api.readJSONData("/data/data.json");
+		String id = "1875babff1e497208bd063841900466217de9d6410254771091f18baaa943060";
 
 		String ret = null;
-		ret = api.createContainer("TOMMYATKINS_Clipboard_Test", createConfig);
+		String createConfig = api.readJSONData("/data/data.json");
+
+		ret = api.createContainer("TOMMYATKINS_TEST", createConfig);
 
 		JSONObject createRet = JSONObject.parseObject(ret);
 
@@ -244,9 +246,9 @@ public class SwarmRemoteApi {
 			System.out.println(vncConfig.getString("HostPort"));
 		}
 
-//		System.out.println(api.killContainer(id));
-//
-//		System.out.println(api.removeContainer(id));
+		// System.out.println(api.killContainer(id));
+		//
+		// System.out.println(api.removeContainer(id));
 
 	}
 

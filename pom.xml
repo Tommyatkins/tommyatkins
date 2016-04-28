@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com</groupId>
@@ -15,7 +15,7 @@
 	</properties>
 
 	<dependencies>
-	
+
 		<!-- apache utils -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -51,15 +51,15 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.3.6</version>
 		</dependency>
-		
+
 		<!-- dd-plist -->
 		<dependency>
 			<groupId>com.googlecode.plist</groupId>
 			<artifactId>dd-plist</artifactId>
 			<version>1.8</version>
 		</dependency>
-		
-		<!--  axiom  -->
+
+		<!-- axiom -->
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-api</artifactId>
@@ -70,28 +70,28 @@
 			<artifactId>axiom-impl</artifactId>
 			<version>1.2.14</version>
 		</dependency>
-		
+
 		<!-- hibernate -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>4.3.6.Final</version>
 		</dependency>
-		
+
 		<!-- freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>2.3.20</version>
 		</dependency>
-		
+
 		<!-- jsoup -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.8.1</version>
 		</dependency>
-		
+
 		<!-- springframework [Dependency Injection] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -103,42 +103,38 @@
 			<artifactId>spring-beans</artifactId>
 			<version>4.1.5.RELEASE</version>
 		</dependency>
-		
+
 		<!-- springframework [Aspect Oriented] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
 			<version>4.1.5.RELEASE</version>
 		</dependency>
-		
+
 		<!-- springframework [Object/Relational Mapping] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>4.1.5.RELEASE</version>
 		</dependency>
-		
+
 		<!-- springframework [Web Frameworks] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>4.1.5.RELEASE</version>
 		</dependency>
-		
+
 		<!-- springframework [Transaction APIs/Managers] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
 			<version>4.1.5.RELEASE</version>
 		</dependency>
-		
-		<!-- fastdfs -->
-		<dependency>
-			<groupId>org.csource</groupId>
-			<artifactId>fastdfs</artifactId>
-			<version>1.24</version>
-		</dependency> 
-		
+
+		<!-- fastdfs <dependency> <groupId>org.csource</groupId> <artifactId>fastdfs</artifactId> 
+			<version>1.24</version> </dependency> -->
+
 		<!-- ActiveMQ ( JMS ) -->
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
@@ -150,21 +146,21 @@
 			<artifactId>qpid-amqp-1-0-client-jms</artifactId>
 			<version>0.30</version>
 		</dependency>
-		
+
 		<!-- redis jedis -->
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>2.7.2</version>
 		</dependency>
-		
+
 		<!-- asm -->
 		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm</artifactId>
 			<version>3.3.1</version>
 		</dependency>
-		
+
 		<!-- excle -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -177,14 +173,27 @@
 			<artifactId>jsch</artifactId>
 			<version>0.1.53</version>
 		</dependency>
-		
+
 		<!-- vmware -->
 		<dependency>
 			<groupId>com.vmware</groupId>
 			<artifactId>vijava</artifactId>
 			<version>5.1</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>5.0.0.Alpha2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-all</artifactId>
+			<version>5.13.2</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -192,14 +201,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.3</version>
 				<configuration>
+					<!-- 指定source和target的版本 -->
 					<source>1.8</source>
 					<target>1.8</target>
-					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 

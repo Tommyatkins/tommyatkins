@@ -12,11 +12,14 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 
@@ -28,8 +31,14 @@ public class HttpConnection {
 	public static void main(String[] args) throws IOException {
 		//	serialToUDID  CBF5CE79-49FF-45CC-BEA4-F0D112C2FB27
 		//	isActive b448dd838e14990cbfd25ef43ee8b4fd6bc64cad
-		InputStream is = new ByteArrayInputStream("b448dd838e14990cbfd25ef43ee8b4fd6bc64cad".getBytes("utf-8"));
-		System.out.println(byteToString(put("https://192.168.0.106/mdm/terminal/terminal!isActive.action?", is)));
+//		InputStream is = new ByteArrayInputStream("b448dd838e14990cbfd25ef43ee8b4fd6bc64cad".getBytes("utf-8"));
+		Map<String, String> params = new HashMap<String, String>();
+		JSONObject json = new JSONObject();
+		json.put("token", "1b10c24c0bcbb48a7952714b2e83fdd0");
+		params.put("paramJson", json.toJSONString());
+		params.put("pageSize", "1");
+		params.put("currentPage", "1");
+		System.out.println(byteToString(post("http://tp.rimiedu.com/tpl/api/goods/getGoodsHomeListApi", params)));
 	}
 
 	public enum RequestMethod {
