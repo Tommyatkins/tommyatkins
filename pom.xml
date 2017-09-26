@@ -135,6 +135,23 @@
 		<!-- fastdfs <dependency> <groupId>org.csource</groupId> <artifactId>fastdfs</artifactId> 
 			<version>1.24</version> </dependency> -->
 
+
+		<dependency>
+			<groupId>com.ios</groupId>
+			<artifactId>0PNGConverter</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/0PNGConverter.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ios</groupId>
+			<artifactId>dd-plist</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/dd-plist.jar</systemPath>
+		</dependency>
+
 		<!-- ActiveMQ ( JMS ) -->
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
@@ -191,6 +208,20 @@
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-all</artifactId>
 			<version>5.13.2</version>
+		</dependency>
+		
+		<!-- provided -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 
