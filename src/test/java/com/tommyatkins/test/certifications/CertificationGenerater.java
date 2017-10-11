@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -15,8 +17,10 @@ import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.util.Base64;
 
@@ -60,15 +64,89 @@ public class CertificationGenerater {
 
     public static void main(String[] args) throws Exception {
         tryGen();
+    }
 
+    final static String CERTIFICATE_TYPE = "X.509";
+
+    final static String ALGORITHM_RSA = "RSA";
+
+    private CertificationGenerater() {}
+
+    /**
+     * 
+     * @author zlkong
+     * @description 输入流转换成x509证书
+     * @date 2017年9月30日 下午3:30:30
+     *
+     * @param is
+     * @return
+     * @throws CertificateException
+     */
+    public static X509Certificate parseX509Certificate(InputStream is) throws CertificateException {
+        return (X509Certificate) parseCertificate(is, CERTIFICATE_TYPE);
+    }
+
+    /**
+     * @author zlkong
+     * @description 数据转换成相应类型的证书
+     * @date 2017年9月30日 下午3:30:54
+     *
+     * @param is
+     * @param type
+     * @return
+     * @throws CertificateException
+     */
+    public static Certificate parseCertificate(InputStream is, String type) throws CertificateException {
+        CertificateFactory certificateFactory = CertificateFactory.getInstance(type);
+        Certificate certificate = certificateFactory.generateCertificate(is);
+        return certificate;
+    }
+
+    /**
+     * @author zlkong
+     * @description 读取PKCS8格式的私钥（PKCS8私钥是从openssl生成的RSA私钥中转换过来的）
+     * @date 2017年10月9日 上午9:54:11
+     *
+     * @param is
+     * @return
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    public static PrivateKey parsePKCS8PrivateKey(InputStream is) throws IOException, GeneralSecurityException {
+        byte[] keyBytes = Base64.getDecoder().decode(read(is));
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_RSA);
+        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+        return privateKey;
+    }
+
+    /**
+     * @author zlkong
+     * @description 从字节流上读取字节数组
+     * @date 2017年10月9日 上午10:11:52
+     *
+     * @param is
+     * @return
+     * @throws IOException
+     */
+    private static byte[] read(InputStream is) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] temp = new byte[256];
+        int length = 0;
+        while ((length = is.read(temp)) != -1) {
+            baos.write(temp, 0, length);
+        }
+        byte[] data = baos.toByteArray();
+        baos.close();
+        return data;
     }
 
     public static void tryGen() throws Exception {
 
         CertificateFactory x509Factory = CertificateFactory.getInstance("x.509");
 
-        try (FileInputStream fis = new FileInputStream("cert/cacert.crt");) {
-            String privateKeyStr = RSAUtil.loadKeyStrByFile("cert/cakey.pem");
+        try (FileInputStream fis = new FileInputStream("ignore/cert/ca.crt");) {
+            String privateKeyStr = RSAUtil.loadKeyStrByFile("ignore/cert/cakey.pem");
             byte[] privateKeyByte = Base64.getDecoder().decode(privateKeyStr);
             ByteArrayInputStream bais = new ByteArrayInputStream(privateKeyByte);
             ASN1InputStream in = new ASN1InputStream(bais);
@@ -80,10 +158,10 @@ public class CertificationGenerater {
             bais.close();
             in.close();
 
-            // openssl pkcs8 -topk8 -inform PEM -in cakey.pem -outfo rm pem -nocrypt -out cakey_pkcs8.pem
-            rootKey = RSAUtil.loadPrivateKeyByStr(RSAUtil.loadKeyStrByFile("/cert/cakey_pkcs8.pem"));
+            // openssl pkcs8 -topk8 -inform PEM -in cakey.pem -outform pem -nocrypt -out cakey_pkcs8.pem
+            rootKey = RSAUtil.loadPrivateKeyByStr(RSAUtil.loadKeyStrByFile("ignore/cert/cakey_pkcs8.pem"));
 
-            storeBytes(rootKey.getEncoded(), "RSA PRIVATE KEY", "cert/out/ca.pem");
+            storeBytes(rootKey.getEncoded(), "RSA PRIVATE KEY", "ignore/cert/out/ca.pem");
 
             X509Certificate root = (X509Certificate) x509Factory.generateCertificate(fis);
 
@@ -96,20 +174,20 @@ public class CertificationGenerater {
             PKCS10 certRequest = keyGen.getCertRequest(x500Name);
 
             byte[] csr = certRequest.getEncoded();
-            storeBytes(csr, "CERTIFICATE REQUEST", "cert/out/top.csr");
+            storeBytes(csr, "CERTIFICATE REQUEST", "ignore/cert/out/top.csr");
 
             PrivateKey privateKey = keyGen.getPrivateKey();
-            storeBytes(privateKey.getEncoded(), "RSA PRIVATE KEY", "cert/out/top.pem");
+            storeBytes(privateKey.getEncoded(), "RSA PRIVATE KEY", "ignore/cert/out/top.pem");
 
             X509Certificate top = keyGen.getSelfCertificate(x500Name, 3 * 365 * 24 * 60 * 60);
 
-            storeBytes(top.getEncoded(), "CERTIFICATE", "cert/out/before_top.crt");
+            storeBytes(top.getEncoded(), "CERTIFICATE", "ignore/cert/out/before_top.crt");
 
             top = tryCreateSignedCertificate(top, root, rootKey);
 
-            storeCertificate(top, "cert/out/top.crt");
+            storeCertificate(top, "ignore/cert/out/top.crt");
 
-            storeKeyAndCertificateChain("top", "changeit".toCharArray(), "cert/out/top.jks", privateKey,
+            storeKeyAndCertificateChain("top", "changeit".toCharArray(), "ignore/cert/out/top.jks", privateKey,
                     new X509Certificate[] {top, root});
 
         }
