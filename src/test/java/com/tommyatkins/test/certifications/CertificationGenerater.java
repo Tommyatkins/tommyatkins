@@ -37,10 +37,7 @@ import sun.security.x509.BasicConstraintsExtension;
 import sun.security.x509.CertificateAlgorithmId;
 import sun.security.x509.CertificateExtensions;
 import sun.security.x509.CertificateVersion;
-import sun.security.x509.DNSName;
-import sun.security.x509.GeneralName;
 import sun.security.x509.GeneralNames;
-import sun.security.x509.IPAddressName;
 import sun.security.x509.SubjectAlternativeNameExtension;
 import sun.security.x509.X500Name;
 import sun.security.x509.X509CertImpl;
@@ -169,7 +166,7 @@ public class CertificationGenerater {
             keyGen.setRandom(SecureRandom.getInstance("SHA1PRNG", "SUN"));
             keyGen.generate(2048);
 
-            X500Name x500Name = new X500Name("CN=zlkong");
+            X500Name x500Name = new X500Name("CN=192.168.4.154");
 
             PKCS10 certRequest = keyGen.getCertRequest(x500Name);
 
@@ -177,7 +174,7 @@ public class CertificationGenerater {
             storeBytes(csr, "CERTIFICATE REQUEST", "ignore/cert/out/top.csr");
 
             PrivateKey privateKey = keyGen.getPrivateKey();
-            storeBytes(privateKey.getEncoded(), "RSA PRIVATE KEY", "ignore/cert/out/top.pem");
+            storeBytes(privateKey.getEncoded(), "RSA PRIVATE KEY", "ignore/cert/out/server.key");
 
             X509Certificate top = keyGen.getSelfCertificate(x500Name, 3 * 365 * 24 * 60 * 60);
 
@@ -185,10 +182,13 @@ public class CertificationGenerater {
 
             top = tryCreateSignedCertificate(top, root, rootKey);
 
-            storeCertificate(top, "ignore/cert/out/top.crt");
+            storeCertificate(top, "ignore/cert/out/server.crt");
 
-            storeKeyAndCertificateChain("top", "changeit".toCharArray(), "ignore/cert/out/top.jks", privateKey,
-                    new X509Certificate[] {top, root});
+            storeKeyAndCertificateChainJKS("192.168.4.154", "changeit".toCharArray(), "ignore/cert/out/server.keystore",
+                    privateKey, new X509Certificate[] {top});
+            
+            storeKeyAndCertificateChainPFX("192.168.4.154", "changeit".toCharArray(), "ignore/cert/out/server.pfx",
+                    privateKey, new X509Certificate[] {top});
 
         }
 
@@ -218,10 +218,9 @@ public class CertificationGenerater {
             info.set(X509CertInfo.ISSUER, issuer);
 
             CertificateExtensions exts = new CertificateExtensions();
-
             GeneralNames gn = new GeneralNames();
-            gn.add(new GeneralName(new DNSName("zlkong")));
-            gn.add(new GeneralName(new IPAddressName("127.0.0.1")));
+            gn.add(new sun.security.x509.GeneralName(new sun.security.x509.DNSName("localhost")));
+            gn.add(new sun.security.x509.GeneralName(new sun.security.x509.IPAddressName("192.168.4.154")));
             SubjectAlternativeNameExtension subjectAltName = new SubjectAlternativeNameExtension(gn);
             exts.set(SubjectAlternativeNameExtension.NAME, subjectAltName);
 
@@ -360,7 +359,7 @@ public class CertificationGenerater {
             String keystore = "cert/out/testkeys.jks";
 
             // Store the certificate chain
-            storeKeyAndCertificateChain(alias, password, keystore, topPrivateKey, chain);
+            storeKeyAndCertificateChainJKS(alias, password, keystore, topPrivateKey, chain);
             // Reload the keystore and display key and certificate chain info
             loadAndDisplayChain(alias, password, keystore);
             // Clear the keystore
@@ -370,9 +369,18 @@ public class CertificationGenerater {
         }
     }
 
-    static void storeKeyAndCertificateChain(String alias, char[] password, String keystore, Key key,
+    static void storeKeyAndCertificateChainJKS(String alias, char[] password, String keystore, Key key,
             X509Certificate[] chain) throws Exception {
-        KeyStore keyStore = KeyStore.getInstance("pkcs12");
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(null, null);
+
+        keyStore.setKeyEntry(alias, key, password, chain);
+        keyStore.store(new FileOutputStream(keystore), password);
+    }
+    
+    static void storeKeyAndCertificateChainPFX(String alias, char[] password, String keystore, Key key,
+            X509Certificate[] chain) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(null, null);
 
         keyStore.setKeyEntry(alias, key, password, chain);
@@ -457,7 +465,17 @@ public class CertificationGenerater {
     private static void storeBytes(byte[] data, String type, String path) {
         try (FileOutputStream fos = new FileOutputStream(path)) {
             fos.write(String.format("-----BEGIN %s-----\n", type).getBytes());
-            fos.write(Base64.getEncoder().encode(data));
+            byte[] result = Base64.getEncoder().encode(data);
+            int length = result.length;
+            int bufferLength = 64;
+            int offset = 0;
+            while (length - bufferLength > 0) {
+                fos.write(result, offset, bufferLength);
+                fos.write("\n".getBytes());
+                length -= bufferLength;
+                offset += bufferLength;
+            }
+            fos.write(result, offset, length);
             fos.write(String.format("\n-----END %s-----\n", type).getBytes());
         } catch (Exception e) {
             e.printStackTrace();
