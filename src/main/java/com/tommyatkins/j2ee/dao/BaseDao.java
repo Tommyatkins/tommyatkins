@@ -16,8 +16,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import com.tommyatkins.j2ee.entity.Page;
@@ -27,6 +27,7 @@ import com.tommyatkins.j2ee.exception.BusinessException;
  * @author xsd
  *
  */
+@SuppressWarnings("deprecation")
 @Repository
 public class BaseDao<T> extends HibernateDaoSupport {
 
@@ -94,7 +95,8 @@ public class BaseDao<T> extends HibernateDaoSupport {
 
 	public List<?> findBySql(String sql, final Object... objects) {
 		List<?> results = getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
-			@Override
+			@SuppressWarnings("rawtypes")
+            @Override
 			public List<?> doInHibernate(Session session) throws HibernateException {
 				Query query = session.createSQLQuery(sql);
 				for (int i = 0; i < objects.length; i++) {
@@ -109,7 +111,8 @@ public class BaseDao<T> extends HibernateDaoSupport {
 
 	public int executeBySql(String sql, final Object... objects) {
 		int results = getHibernateTemplate().execute(new HibernateCallback<Integer>() {
-			@Override
+			@SuppressWarnings("rawtypes")
+            @Override
 			public Integer doInHibernate(Session session) throws HibernateException {
 				Transaction transaction = session.getTransaction();
 				transaction.begin();

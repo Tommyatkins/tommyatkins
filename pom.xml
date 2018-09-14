@@ -1,10 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com</groupId>
 	<artifactId>tommyatkins</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.2.RELEASE</version>
+		<!-- <version>1.5.13.RELEASE</version> -->
+	</parent>
 
 	<name>tommyatkins</name>
 	<url>http://maven.apache.org</url>
@@ -15,11 +23,19 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+		</dependency>
+
 		<!-- apache utils -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
@@ -29,7 +45,6 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
@@ -48,7 +63,6 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.3.6</version>
 		</dependency>
 
 		<!-- dd-plist -->
@@ -74,14 +88,12 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.3.6.Final</version>
 		</dependency>
 
 		<!-- freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
-			<version>2.3.20</version>
 		</dependency>
 
 		<!-- jsoup -->
@@ -95,43 +107,38 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>4.1.5.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>4.1.5.RELEASE</version>
 		</dependency>
 
 		<!-- springframework [Aspect Oriented] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>4.1.5.RELEASE</version>
 		</dependency>
 
 		<!-- springframework [Object/Relational Mapping] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>4.1.5.RELEASE</version>
 		</dependency>
 
 		<!-- springframework [Web Frameworks] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>4.1.5.RELEASE</version>
 		</dependency>
 
 		<!-- springframework [Transaction APIs/Managers] -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>4.1.5.RELEASE</version>
 		</dependency>
 
-		<!-- fastdfs <dependency> <groupId>org.csource</groupId> <artifactId>fastdfs</artifactId> <version>1.24</version> </dependency> -->
+		<!-- fastdfs <dependency> <groupId>org.csource</groupId> <artifactId>fastdfs</artifactId> 
+			<version>1.24</version> </dependency> -->
 
 
 		<dependency>
@@ -166,7 +173,6 @@
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
-			<version>2.7.2</version>
 		</dependency>
 
 		<!-- asm -->
@@ -199,7 +205,6 @@
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
-			<version>5.0.0.Alpha2</version>
 		</dependency>
 
 		<dependency>
@@ -218,7 +223,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -248,7 +252,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
 				<configuration>
 					<!-- 指定source和target的版本 -->
 					<source>1.8</source>
@@ -259,6 +262,10 @@
 					<!-- <bootclasspath>${java.home}\lib\rt.jar;${java.home}\lib\jce.jar</bootclasspath> -->
 					<!-- </compilerArguments> -->
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

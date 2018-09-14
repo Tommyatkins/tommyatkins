@@ -166,7 +166,7 @@ public class CertificationGenerater {
             keyGen.setRandom(SecureRandom.getInstance("SHA1PRNG", "SUN"));
             keyGen.generate(2048);
 
-            X500Name x500Name = new X500Name("CN=192.168.4.154");
+            X500Name x500Name = new X500Name("CN=192.168.4.99");
 
             PKCS10 certRequest = keyGen.getCertRequest(x500Name);
 
@@ -184,10 +184,10 @@ public class CertificationGenerater {
 
             storeCertificate(top, "ignore/cert/out/server.crt");
 
-            storeKeyAndCertificateChainJKS("192.168.4.154", "changeit".toCharArray(), "ignore/cert/out/server.keystore",
+            storeKeyAndCertificateChainJKS("192.168.4.99", "changeit".toCharArray(), "ignore/cert/out/server.keystore",
                     privateKey, new X509Certificate[] {top});
             
-            storeKeyAndCertificateChainPFX("192.168.4.154", "changeit".toCharArray(), "ignore/cert/out/server.pfx",
+            storeKeyAndCertificateChainPFX("192.168.4.99", "changeit".toCharArray(), "ignore/cert/out/server.pfx",
                     privateKey, new X509Certificate[] {top});
 
         }
@@ -220,7 +220,7 @@ public class CertificationGenerater {
             CertificateExtensions exts = new CertificateExtensions();
             GeneralNames gn = new GeneralNames();
             gn.add(new sun.security.x509.GeneralName(new sun.security.x509.DNSName("localhost")));
-            gn.add(new sun.security.x509.GeneralName(new sun.security.x509.IPAddressName("192.168.4.154")));
+            gn.add(new sun.security.x509.GeneralName(new sun.security.x509.IPAddressName("192.168.4.99")));
             SubjectAlternativeNameExtension subjectAltName = new SubjectAlternativeNameExtension(gn);
             exts.set(SubjectAlternativeNameExtension.NAME, subjectAltName);
 

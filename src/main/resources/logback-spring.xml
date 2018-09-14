@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- org.springframework.boot.logging.logback.ColorConverter -->
+	<!-- ch.qos.logback.classic.PatternLayout -->
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<!-- <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/spring.log}" /> -->
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+	<!-- <include resource="org/springframework/boot/logging/logback/file-appender.xml" /> -->
+	<property name="LOG_FILE" value="${LOG_FILE:-scorpio.log}" />
+	<property name="LOG_PATH" value="${LOG_PATH:-.}" />
+
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/${LOG_FILE}</file>
+
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/%d{yyyy-MM-dd}/${LOG_FILE}</fileNamePattern>
+			<maxHistory>180</maxHistory>
+		</rollingPolicy>
+
+		<!-- <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"> -->
+		<!-- <fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/%d{yyyy-MM-dd}/${LOG_FILE}.%i.log</fileNamePattern> -->
+		<!-- <maxHistory>180</maxHistory> -->
+		<!-- <maxFileSize>10MB</maxFileSize> -->
+		<!-- </rollingPolicy> -->
+
+		<!-- <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"> -->
+		<!-- <MaxFileSize>10MB</MaxFileSize> -->
+		<!-- </triggeringPolicy> -->
+
+		<!-- Support multiple-JVM writing to the same log file -->
+		<!-- <prudent>true</prudent> -->
+	</appender>
+
+	<appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/error_${LOG_FILE}</file>
+
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/%d{yyyy-MM-dd}/error_${LOG_FILE}</fileNamePattern>
+			<maxHistory>90</maxHistory>
+		</rollingPolicy>
+
+		<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE" />
+		<appender-ref ref="ERROR" />
+	</root>
+
+	<springProfile name="!dev">
+
+		<appender name="JOB_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+			<file>${LOG_PATH}/job_${LOG_FILE}</file>
+
+			<encoder>
+				<pattern>${FILE_LOG_PATTERN}</pattern>
+			</encoder>
+
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/%d{yyyy-MM-dd}/job_${LOG_FILE}</fileNamePattern>
+				<maxHistory>180</maxHistory>
+			</rollingPolicy>
+
+		</appender>
+
+		<logger name="com.scorpio.job" additivity="false">
+			<appender-ref ref="JOB_FILE" />
+			<appender-ref ref="CONSOLE" />
+		</logger>
+
+	</springProfile>
+
+</configuration>
