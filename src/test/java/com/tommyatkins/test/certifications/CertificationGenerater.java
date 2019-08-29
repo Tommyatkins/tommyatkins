@@ -1,97 +1,75 @@
 package com.tommyatkins.test.certifications;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.security.GeneralSecurityException;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.Principal;
-import java.security.PrivateKey;
-import java.security.SecureRandom;
-import java.security.Signature;
+import com.tommyatkins.security.utils.RSAUtil;
+import sun.security.pkcs10.PKCS10;
+import sun.security.tools.keytool.CertAndKeyGen;
+import sun.security.x509.*;
+
+import java.io.*;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPrivateKeySpec;
 import java.util.Base64;
-
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
-
-import com.tommyatkins.security.utils.RSAUtil;
-
-import sun.security.pkcs10.PKCS10;
-import sun.security.tools.keytool.CertAndKeyGen;
-import sun.security.x509.AlgorithmId;
-import sun.security.x509.BasicConstraintsExtension;
-import sun.security.x509.CertificateAlgorithmId;
-import sun.security.x509.CertificateExtensions;
-import sun.security.x509.CertificateVersion;
-import sun.security.x509.GeneralNames;
-import sun.security.x509.SubjectAlternativeNameExtension;
-import sun.security.x509.X500Name;
-import sun.security.x509.X509CertImpl;
-import sun.security.x509.X509CertInfo;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author zlkong
- * @date 2017年9月26日 上午11:13:58
- * @description TODO
- *
- ***********************************************
- * @modifyRecord
- ***********************************************
- * @editor zlkong
  * @version V1.0
  * @date 2017年9月26日 上午11:13:58
+ * @description TODO
+ * <p>
+ * **********************************************
+ * @modifyRecord **********************************************
+ * @editor zlkong
+ * @date 2017年9月26日 上午11:13:58
  * @description 创建
- *
  */
 public class CertificationGenerater {
 
     public static void main(String[] args) throws Exception {
-        tryGen();
+//        tryGen("ignore/cert/ca.crt","ignore/cert/cakey.pem","ignore/cert/cakey_pkcs8.pem");
+
+        tryGen("gemini",
+                365,
+                "E:\\Repository\\certifications\\gemini\\ca.crt",
+                "E:\\Repository\\certifications\\gemini\\ca.key",
+                "E:\\Repository\\certifications\\gemini\\ca_pkcs8.key",
+                "gemini-debug",
+                "avBPw9LDGLuHmnrE",
+                new String[]{},
+                new String[]{});
     }
 
     final static String CERTIFICATE_TYPE = "X.509";
 
     final static String ALGORITHM_RSA = "RSA";
 
-    private CertificationGenerater() {}
+    private CertificationGenerater() {
+    }
 
     /**
-     * 
-     * @author zlkong
-     * @description 输入流转换成x509证书
-     * @date 2017年9月30日 下午3:30:30
-     *
      * @param is
      * @return
      * @throws CertificateException
+     * @author zlkong
+     * @description 输入流转换成x509证书
+     * @date 2017年9月30日 下午3:30:30
      */
     public static X509Certificate parseX509Certificate(InputStream is) throws CertificateException {
         return (X509Certificate) parseCertificate(is, CERTIFICATE_TYPE);
     }
 
     /**
-     * @author zlkong
-     * @description 数据转换成相应类型的证书
-     * @date 2017年9月30日 下午3:30:54
-     *
      * @param is
      * @param type
      * @return
      * @throws CertificateException
+     * @author zlkong
+     * @description 数据转换成相应类型的证书
+     * @date 2017年9月30日 下午3:30:54
      */
     public static Certificate parseCertificate(InputStream is, String type) throws CertificateException {
         CertificateFactory certificateFactory = CertificateFactory.getInstance(type);
@@ -100,14 +78,13 @@ public class CertificationGenerater {
     }
 
     /**
-     * @author zlkong
-     * @description 读取PKCS8格式的私钥（PKCS8私钥是从openssl生成的RSA私钥中转换过来的）
-     * @date 2017年10月9日 上午9:54:11
-     *
      * @param is
      * @return
      * @throws IOException
      * @throws GeneralSecurityException
+     * @author zlkong
+     * @description 读取PKCS8格式的私钥（PKCS8私钥是从openssl生成的RSA私钥中转换过来的）
+     * @date 2017年10月9日 上午9:54:11
      */
     public static PrivateKey parsePKCS8PrivateKey(InputStream is) throws IOException, GeneralSecurityException {
         byte[] keyBytes = Base64.getDecoder().decode(read(is));
@@ -118,13 +95,12 @@ public class CertificationGenerater {
     }
 
     /**
-     * @author zlkong
-     * @description 从字节流上读取字节数组
-     * @date 2017年10月9日 上午10:11:52
-     *
      * @param is
      * @return
      * @throws IOException
+     * @author zlkong
+     * @description 从字节流上读取字节数组
+     * @date 2017年10月9日 上午10:11:52
      */
     private static byte[] read(InputStream is) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -138,25 +114,26 @@ public class CertificationGenerater {
         return data;
     }
 
-    public static void tryGen() throws Exception {
+    public static void tryGen(String ca, int days, String crt, String key, String pkcs8, String commonName, String pw, String[] ips, String[] dns) throws Exception {
 
         CertificateFactory x509Factory = CertificateFactory.getInstance("x.509");
 
-        try (FileInputStream fis = new FileInputStream("ignore/cert/ca.crt");) {
-            String privateKeyStr = RSAUtil.loadKeyStrByFile("ignore/cert/cakey.pem");
-            byte[] privateKeyByte = Base64.getDecoder().decode(privateKeyStr);
-            ByteArrayInputStream bais = new ByteArrayInputStream(privateKeyByte);
-            ASN1InputStream in = new ASN1InputStream(bais);
-            ASN1Primitive obj = in.readObject();
-            RSAPrivateKey pStruct = RSAPrivateKey.getInstance(obj);
-            RSAPrivateKeySpec spec = new RSAPrivateKeySpec(pStruct.getModulus(), pStruct.getPublicExponent());
-            KeyFactory kf = KeyFactory.getInstance("RSA");
-            PrivateKey rootKey = kf.generatePrivate(spec);
-            bais.close();
-            in.close();
+        // openssl req -new -x509 -days 365 -keyout ca.key -out ca.crt
+        try (FileInputStream fis = new FileInputStream(crt);) {
+//            String privateKeyStr = RSAUtil.loadKeyStrByFile(key);
+//            byte[] privateKeyByte = Base64.getDecoder().decode(privateKeyStr);
+//            ByteArrayInputStream bais = new ByteArrayInputStream(privateKeyByte);
+//            ASN1InputStream in = new ASN1InputStream(bais);
+//            ASN1Primitive obj = in.readObject();
+//            RSAPrivateKey pStruct = RSAPrivateKey.getInstance(obj);
+//            RSAPrivateKeySpec spec = new RSAPrivateKeySpec(pStruct.getModulus(), pStruct.getPublicExponent());
+//            KeyFactory kf = KeyFactory.getInstance("RSA");
+//            PrivateKey rootKey = kf.generatePrivate(spec);
+//            bais.close();
+//            in.close();
 
             // openssl pkcs8 -topk8 -inform PEM -in cakey.pem -outform pem -nocrypt -out cakey_pkcs8.pem
-            rootKey = RSAUtil.loadPrivateKeyByStr(RSAUtil.loadKeyStrByFile("ignore/cert/cakey_pkcs8.pem"));
+            PrivateKey rootKey = RSAUtil.loadPrivateKeyByStr(RSAUtil.loadKeyStrByFile(pkcs8));
 
             storeBytes(rootKey.getEncoded(), "RSA PRIVATE KEY", "ignore/cert/out/ca.pem");
 
@@ -166,7 +143,8 @@ public class CertificationGenerater {
             keyGen.setRandom(SecureRandom.getInstance("SHA1PRNG", "SUN"));
             keyGen.generate(2048);
 
-            X500Name x500Name = new X500Name("CN=192.168.4.99");
+            // TODO
+            X500Name x500Name = new X500Name("CN=" + commonName);
 
             PKCS10 certRequest = keyGen.getCertRequest(x500Name);
 
@@ -176,26 +154,30 @@ public class CertificationGenerater {
             PrivateKey privateKey = keyGen.getPrivateKey();
             storeBytes(privateKey.getEncoded(), "RSA PRIVATE KEY", "ignore/cert/out/server.key");
 
-            X509Certificate top = keyGen.getSelfCertificate(x500Name, 3 * 365 * 24 * 60 * 60);
+            X509Certificate top = keyGen.getSelfCertificate(x500Name, TimeUnit.SECONDS.convert(days, TimeUnit.DAYS));
 
             storeBytes(top.getEncoded(), "CERTIFICATE", "ignore/cert/out/before_top.crt");
 
-            top = tryCreateSignedCertificate(top, root, rootKey);
+            top = tryCreateSignedCertificate(top, root, rootKey, ips, dns);
 
             storeCertificate(top, "ignore/cert/out/server.crt");
 
-            storeKeyAndCertificateChainJKS("192.168.4.99", "changeit".toCharArray(), "ignore/cert/out/server.keystore",
-                    privateKey, new X509Certificate[] {top});
-            
-            storeKeyAndCertificateChainPFX("192.168.4.99", "changeit".toCharArray(), "ignore/cert/out/server.pfx",
-                    privateKey, new X509Certificate[] {top});
+            // TODO
+            char[] password = pw.toCharArray();
+//            char[] password = "b70EJdwiqBassPx8".toCharArray();
+
+            storeKeyAndCertificateChainJKS(ca, root, commonName, password, "ignore/cert/out/server.keystore",
+                    privateKey, new X509Certificate[]{top});
+
+            storeKeyAndCertificateChainPFX(ca, root, commonName, password, "ignore/cert/out/server.pfx",
+                    privateKey, new X509Certificate[]{top});
 
         }
 
     }
 
     static X509Certificate tryCreateSignedCertificate(X509Certificate cetrificate, X509Certificate issuerCertificate,
-            PrivateKey issuerPrivateKey) {
+                                                      PrivateKey issuerPrivateKey, String[] ips, String[] dns) {
         try {
             Principal issuer = issuerCertificate.getSubjectDN();
             String issuerSigAlg = issuerCertificate.getSigAlgName();
@@ -216,15 +198,31 @@ public class CertificationGenerater {
             // info.set(X509CertInfo.KEY, new CertificateX509Key(cetrificate.getPublicKey()));
 
             info.set(X509CertInfo.ISSUER, issuer);
-
             CertificateExtensions exts = new CertificateExtensions();
-            GeneralNames gn = new GeneralNames();
-            gn.add(new sun.security.x509.GeneralName(new sun.security.x509.DNSName("localhost")));
-            gn.add(new sun.security.x509.GeneralName(new sun.security.x509.IPAddressName("192.168.4.99")));
-            SubjectAlternativeNameExtension subjectAltName = new SubjectAlternativeNameExtension(gn);
-            exts.set(SubjectAlternativeNameExtension.NAME, subjectAltName);
+            boolean hasIp = ips != null && ips.length > 0;
+            boolean hasDns = dns != null && dns.length > 0;
+            if (hasIp || hasDns) {
+                GeneralNames gn = new GeneralNames();
+                if (hasIp) {
+                    for (String ip : ips) {
+                        gn.add(new sun.security.x509.GeneralName(new sun.security.x509.IPAddressName(ip)));
+                    }
+                }
+                if (hasDns) {
+                    for (String dn : dns) {
+                        gn.add(new sun.security.x509.GeneralName(new sun.security.x509.DNSName(dn)));
+                    }
+                }
+
+                SubjectAlternativeNameExtension subjectAltName = new SubjectAlternativeNameExtension(gn);
+
+                // TODO
+                exts.set(SubjectAlternativeNameExtension.NAME, subjectAltName);
+            }
+
 
             BasicConstraintsExtension bce = new BasicConstraintsExtension(false, -1);
+//            BasicConstraintsExtension bce = new BasicConstraintsExtension(true, 3);
             exts.set(BasicConstraintsExtension.NAME, bce);
 
             info.set(X509CertInfo.EXTENSIONS, exts);
@@ -314,76 +312,23 @@ public class CertificationGenerater {
         return new byte[0];
     }
 
-    public static void test() {
-        try {
-            // Generate ROOT certificate
-            CertAndKeyGen keyGen = new CertAndKeyGen("RSA", "SHA256WithRSA", null);
-            keyGen.generate(1024);
-            PrivateKey rootPrivateKey = keyGen.getPrivateKey();
-
-            X509Certificate rootCertificate =
-                    keyGen.getSelfCertificate(new X500Name("CN=ROOT"), (long) 365 * 24 * 60 * 60);
-
-            // Generate intermediate certificate
-            CertAndKeyGen keyGen1 = new CertAndKeyGen("RSA", "SHA256WithRSA", null);
-            keyGen1.generate(1024);
-            PrivateKey middlePrivateKey = keyGen1.getPrivateKey();
-
-            X509Certificate middleCertificate =
-                    keyGen1.getSelfCertificate(new X500Name("CN=MIDDLE"), (long) 365 * 24 * 60 * 60);
-
-            // Generate leaf certificate
-            CertAndKeyGen keyGen2 = new CertAndKeyGen("RSA", "SHA256WithRSA", null);
-            keyGen2.generate(1024);
-            PrivateKey topPrivateKey = keyGen2.getPrivateKey();
-
-            X509Certificate topCertificate =
-                    keyGen2.getSelfCertificate(new X500Name("CN=TOP"), (long) 365 * 24 * 60 * 60);
-
-            rootCertificate = createSignedCertificate(rootCertificate, rootCertificate, rootPrivateKey);
-            storeCertificate(rootCertificate, "cert/out/root.crt");
-
-            middleCertificate = createSignedCertificate(middleCertificate, rootCertificate, rootPrivateKey);
-            storeCertificate(middleCertificate, "cert/out/middle.crt");
-
-            topCertificate = createSignedCertificate(topCertificate, middleCertificate, middlePrivateKey);
-            storeCertificate(topCertificate, "cert/out/top.crt");
-
-            X509Certificate[] chain = new X509Certificate[3];
-            chain[0] = topCertificate;
-            chain[1] = middleCertificate;
-            chain[2] = rootCertificate;
-
-            String alias = "mykey";
-            char[] password = "password".toCharArray();
-            String keystore = "cert/out/testkeys.jks";
-
-            // Store the certificate chain
-            storeKeyAndCertificateChainJKS(alias, password, keystore, topPrivateKey, chain);
-            // Reload the keystore and display key and certificate chain info
-            loadAndDisplayChain(alias, password, keystore);
-            // Clear the keystore
-            // clearKeyStore(alias, password, keystore);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    static void storeKeyAndCertificateChainJKS(String alias, char[] password, String keystore, Key key,
-            X509Certificate[] chain) throws Exception {
+    static void storeKeyAndCertificateChainJKS(String ca, X509Certificate root, String alias, char[] password, String keystore, Key key,
+                                               X509Certificate[] chain) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null, null);
 
         keyStore.setKeyEntry(alias, key, password, chain);
+        keyStore.setCertificateEntry(ca, root);
         keyStore.store(new FileOutputStream(keystore), password);
     }
-    
-    static void storeKeyAndCertificateChainPFX(String alias, char[] password, String keystore, Key key,
-            X509Certificate[] chain) throws Exception {
+
+    static void storeKeyAndCertificateChainPFX(String ca, X509Certificate root, String alias, char[] password, String keystore, Key key,
+                                               X509Certificate[] chain) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(null, null);
 
         keyStore.setKeyEntry(alias, key, password, chain);
+        keyStore.setCertificateEntry(ca, root);
         keyStore.store(new FileOutputStream(keystore), password);
     }
 
@@ -418,7 +363,7 @@ public class CertificationGenerater {
     }
 
     static X509Certificate createSignedCertificate(X509Certificate cetrificate, X509Certificate issuerCertificate,
-            PrivateKey issuerPrivateKey) {
+                                                   PrivateKey issuerPrivateKey) {
         try {
             Principal issuer = issuerCertificate.getSubjectDN();
             String issuerSigAlg = issuerCertificate.getSigAlgName();
